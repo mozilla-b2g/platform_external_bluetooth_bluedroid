@@ -3752,7 +3752,8 @@ The maximum number of payload octets that the local device can receive in a sing
 #endif
 
 #ifndef BTA_AG_CHLD_VAL
-#define BTA_AG_CHLD_VAL  "(0,1,2,3)"
+/* B2G supported CHLD values */
+#define BTA_AG_CHLD_VAL  "(0,1,2)"
 #endif
 
 /* Set the CIND to match HFP 1.5 */

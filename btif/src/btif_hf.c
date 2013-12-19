@@ -61,14 +61,11 @@
 #endif
 
 #ifndef BTIF_HF_FEATURES
+/* B2G supported BRSF values */
 #define BTIF_HF_FEATURES   ( BTA_AG_FEAT_3WAY | \
-                             BTA_AG_FEAT_ECNR   | \
                              BTA_AG_FEAT_REJECT | \
                              BTA_AG_FEAT_ECS    | \
-                             BTA_AG_FEAT_EXTERR | \
-                             BTA_AG_FEAT_BTRH   | \
-                             BTA_AG_FEAT_VREC   | \
-                             BTA_AG_FEAT_UNAT)
+                             BTA_AG_FEAT_EXTERR)
 #endif
 
 #define BTIF_HF_ID_1        0
