@@ -271,9 +271,8 @@ static BOOLEAN btif_av_state_idle_handler(btif_sm_event_t event, void *p_data)
 {
     tBTA_AV *p_bta_data;
 
-    BTIF_TRACE_DEBUG3("%s event:%s flags %x", __FUNCTION__,
+    BTIF_TRACE_IMP3("%s event:%s flags %x", __FUNCTION__,
                      dump_av_sm_event_name(event), btif_av_cb.flags);
-
     switch (event)
     {
         case BTIF_SM_ENTER_EVT:
@@ -407,7 +406,7 @@ static BOOLEAN btif_av_state_idle_handler(btif_sm_event_t event, void *p_data)
 
 static BOOLEAN btif_av_state_opening_handler(btif_sm_event_t event, void *p_data)
 {
-    BTIF_TRACE_DEBUG3("%s event:%s flags %x", __FUNCTION__,
+    BTIF_TRACE_IMP3("%s event:%s flags %x", __FUNCTION__,
                      dump_av_sm_event_name(event), btif_av_cb.flags);
 
     switch (event)
@@ -521,7 +520,7 @@ static BOOLEAN btif_av_state_opening_handler(btif_sm_event_t event, void *p_data
 
 static BOOLEAN btif_av_state_closing_handler(btif_sm_event_t event, void *p_data)
 {
-    BTIF_TRACE_DEBUG3("%s event:%s flags %x", __FUNCTION__,
+    BTIF_TRACE_IMP3("%s event:%s flags %x", __FUNCTION__,
                      dump_av_sm_event_name(event), btif_av_cb.flags);
 
     switch (event)
@@ -598,7 +597,7 @@ static BOOLEAN btif_av_state_opened_handler(btif_sm_event_t event, void *p_data)
     tBTA_AV *p_av = (tBTA_AV*)p_data;
     tBTIF_STATUS status = BTIF_SUCCESS;
 
-    BTIF_TRACE_DEBUG3("%s event:%s flags %x", __FUNCTION__,
+    BTIF_TRACE_IMP3("%s event:%s flags %x", __FUNCTION__,
                      dump_av_sm_event_name(event), btif_av_cb.flags);
 
     if ( (event == BTA_AV_REMOTE_CMD_EVT) && (btif_av_cb.flags & BTIF_AV_FLAG_REMOTE_SUSPEND) &&
@@ -771,7 +770,7 @@ static BOOLEAN btif_av_state_started_handler(btif_sm_event_t event, void *p_data
 {
     tBTA_AV *p_av = (tBTA_AV*)p_data;
 
-    BTIF_TRACE_DEBUG3("%s event:%s flags %x", __FUNCTION__,
+    BTIF_TRACE_IMP3("%s event:%s flags %x", __FUNCTION__,
                      dump_av_sm_event_name(event), btif_av_cb.flags);
 
     switch (event)
