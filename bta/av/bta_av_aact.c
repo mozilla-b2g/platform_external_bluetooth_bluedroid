@@ -235,12 +235,13 @@ tAVDT_CTRL_CBACK * const bta_av_dt_cback[] =
 **
 ** Returns          void
 ***********************************************/
-UINT8  bta_av_get_scb_handle ( tBTA_AV_SCB *p_scb, UINT8 t_local_sep )
+UINT8  bta_av_get_scb_handle ( tBTA_AV_SCB *p_scb, UINT8 local_sep )
 {
     UINT8 xx =0;
     for (xx = 0; xx<BTA_AV_MAX_SEPS; xx++)
     {
-        if (p_scb->seps[xx].tsep == t_local_sep)
+        if ((p_scb->seps[xx].tsep == local_sep) &&
+            (p_scb->seps[xx].codec_type == p_scb->codec_type))
             return (p_scb->seps[xx].av_handle);
     }
     APPL_TRACE_DEBUG0(" bta_av_get_scb_handle appropiate sep_type not found")
@@ -2323,15 +2324,15 @@ void bta_av_start_ok (tBTA_AV_SCB *p_scb, tBTA_AV_DATA *p_data)
         p_scb->q_tag = BTA_AV_Q_TAG_START;
     }
 
-    if (p_scb->wait & BTA_AV_WAIT_ACP_CAPS_ON)
-    {
-        p_scb->wait |= BTA_AV_WAIT_ACP_CAPS_STARTED;
-    }
-
     if (p_scb->wait)
     {
-        APPL_TRACE_DEBUG2("wait:x%x q_tag:%d- not started", p_scb->wait, p_scb->q_tag);
-        return;
+        APPL_TRACE_ERROR2("wait:x%x q_tag:%d- not started", p_scb->wait, p_scb->q_tag);
+        /* Clear first bit of p_scb->wait and not to return from this point else
+         * HAL layer gets blocked. And if there is delay in Get Capability response as
+         * first bit of p_scb->wait is cleared hence it ensures bt_av_start_ok is not called
+         * again from bta_av_save_caps.
+        */
+        p_scb->wait &= ~BTA_AV_WAIT_ACP_CAPS_ON;
     }
 
     /* tell role manager to check M/S role */
