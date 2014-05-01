@@ -869,8 +869,13 @@ static void btif_dm_pin_req_evt(tBTA_DM_PIN_REQ *p_pin_req)
             }
         }
     }
+#ifdef Q_BLUETOOTH
     HAL_CBACK(bt_hal_cbacks, pin_request_cb,
                      &bd_addr, &bd_name, cod, secure);
+#else
+    HAL_CBACK(bt_hal_cbacks, pin_request_cb,
+                     &bd_addr, &bd_name, cod);
+#endif
 }
 
 /*******************************************************************************
@@ -3002,8 +3007,13 @@ static void btif_dm_ble_passkey_req_evt(tBTA_DM_PIN_REQ *p_pin_req)
 
     cod = COD_UNCLASSIFIED;
 
+#ifdef Q_BLUETOOTH
     HAL_CBACK(bt_hal_cbacks, pin_request_cb,
               &bd_addr, &bd_name, cod, FALSE);
+#else
+    HAL_CBACK(bt_hal_cbacks, pin_request_cb,
+              &bd_addr, &bd_name, cod);
+#endif
 }
 
 

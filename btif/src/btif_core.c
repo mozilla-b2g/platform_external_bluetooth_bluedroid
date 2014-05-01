@@ -847,8 +847,10 @@ static void btif_hci_event_cback ( tBTM_RAW_CMPL *p )
     BTIF_TRACE_DEBUG1("%s", __FUNCTION__);
     if(p != NULL)
     {
+    #ifdef Q_BLUETOOTH
         HAL_CBACK(bt_hal_cbacks, hci_event_recv_cb, p->event_code, p->p_param_buf,
                                                                 p->param_len);
+   #endif
     }
 }
 
@@ -1231,11 +1233,13 @@ static void system_power_manager_wake(UINT16 event, char *p_param)
     {
         case BTIF_DM_SYSTEM_WAKE:
         {
+#ifdef Q_BLUETOOTH
              if(*(UINT32 *)p_param) {
                  HAL_CBACK(bt_hal_cbacks, wake_state_changed_cb, BT_STATE_ON);
              } else {
                  HAL_CBACK(bt_hal_cbacks, wake_state_changed_cb, BT_STATE_OFF);
              }
+#endif
         } break;
 
         default:

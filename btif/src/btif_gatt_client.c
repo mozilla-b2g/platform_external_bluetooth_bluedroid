@@ -582,8 +582,10 @@ static void btif_le_extended_scan_upstreams_evt(uint16_t event, char* p_param)
                 btif_gattc_update_properties(p_btif_cb);
             }
 
+#ifdef Q_BLUETOOTH
             HAL_CBACK(bt_hal_cbacks, le_extended_scan_result_cb,
                       &p_btif_cb->bd_addr, p_btif_cb->rssi, p_btif_cb->value);
+#endif
             break;
         }
         default:
