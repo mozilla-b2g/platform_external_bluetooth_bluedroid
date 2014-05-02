@@ -23,6 +23,7 @@
  *
  ******************************************************************************/
 
+#include "../../../../../gecko/dom/bluetooth/bluedroid/b2g_bdroid_buildcfg.h"
 #include "gki.h"
 #include "bta_api.h"
 #include "bta_ag_api.h"
