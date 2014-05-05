@@ -748,9 +748,9 @@ static void gki_set_timer_scheduling( void )
         /* ensure highest priority in the system + 2 to allow space for read threads */
         param.sched_priority = GKI_LINUX_TIMER_TICK_PRIORITY;
 
-        if ( 0!=sched_setscheduler(main_pid, GKI_LINUX_TIMER_POLICY, &param ) )
+        //if ( 0!=sched_setscheduler(main_pid, GKI_LINUX_TIMER_POLICY, &param ) )
         {
-            GKI_TRACE("sched_setscheduler() failed with error: %d", errno);
+            GKI_TRACE("sched_setscheduler() failed with error: %d", EPERM);
         }
     }
     else
