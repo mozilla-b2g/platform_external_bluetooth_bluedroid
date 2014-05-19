@@ -1663,6 +1663,9 @@ void btu_hcif_cmd_timeout (UINT8 controller_id)
                   "Num consecutive HCI Cmd tout =%d Restarting BT process",num_hci_cmds_timed_out);
         bte_ssr_cleanup();
         usleep(10000); /* 10 milliseconds */
+#if (defined(ANDROID_APP_INCLUDED) && (ANDROID_APP_INCLUDED == TRUE))
+        LOG_ALWAYS_FATAL("btu_hcif: killing the process to force a restart as part of fault tolerance");
+#endif
         /* Killing the process to force a restart as part of fault tolerance */
         kill(getpid(), SIGKILL);
     }

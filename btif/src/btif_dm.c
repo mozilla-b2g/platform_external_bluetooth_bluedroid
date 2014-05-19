@@ -1809,6 +1809,9 @@ static void btif_dm_upstreams_evt(UINT16 event, char* p_param)
             BTIF_TRACE_DEBUG0("going to sleep ");
             usleep(100000); /* 100milliseconds */
             BTIF_TRACE_DEBUG0("sleep over !! ");
+#if (defined(ANDROID_APP_INCLUDED) && (ANDROID_APP_INCLUDED == TRUE))
+            LOG_ALWAYS_FATAL("btif_dm: killing the process to force a restart as part of fault tolerance");
+#endif
             /* Killing the process to force a restart as part of fault tolerance */
             kill(getpid(), SIGKILL);
             break;
