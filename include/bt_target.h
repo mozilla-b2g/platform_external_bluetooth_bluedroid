@@ -280,7 +280,7 @@
 #endif
 
 #ifndef BTA_GATT_INCLUDED
-#define BTA_GATT_INCLUDED TRUE
+#define BTA_GATT_INCLUDED FALSE
 #endif
 
 #ifndef BTA_DISABLE_DELAY
@@ -1434,7 +1434,7 @@ and USER_HW_DISABLE_API macros */
 ******************************************************************************/
 
 #ifndef BLE_INCLUDED
-#define BLE_INCLUDED            TRUE
+#define BLE_INCLUDED            FALSE
 #endif
 
 #ifndef LOCAL_BLE_CONTROLLER_ID
@@ -1495,7 +1495,7 @@ and USER_HW_DISABLE_API macros */
 **
 ******************************************************************************/
 #ifndef SMP_INCLUDED
-#define SMP_INCLUDED         TRUE
+#define SMP_INCLUDED         FALSE
 #endif
 
 #ifndef SMP_DEBUG
