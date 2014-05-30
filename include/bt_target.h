@@ -1228,7 +1228,7 @@ and USER_HW_DISABLE_API macros */
 /* Maximum number of consecutive HCI commands  that can time out
 * before  it gets treated as H/w error*/
 #ifndef BTM_MAX_HCI_CMD_TOUT_BEFORE_RESTART
-#define BTM_MAX_HCI_CMD_TOUT_BEFORE_RESTART 2
+#define BTM_MAX_HCI_CMD_TOUT_BEFORE_RESTART 1
 #endif
 
 /******************************************************************************
