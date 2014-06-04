@@ -35,6 +35,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <sys/socket.h>
+#include <sys/poll.h>
 #ifdef QCOM_WCN_SSR
 #include <termios.h>
 #include <sys/ioctl.h>
@@ -111,16 +112,6 @@ static volatile uint8_t userial_running = 0;
 *****************************************************************************/
 static int signal_fds[2]={0,1};
 static uint8_t rx_flow_on = TRUE;
-static inline int create_signal_fds(fd_set* set)
-{
-    if(signal_fds[0]==0 && socketpair(AF_UNIX, SOCK_STREAM, 0, signal_fds)<0)
-    {
-        ALOGE("create_signal_sockets:socketpair failed, errno: %d", errno);
-        return -1;
-    }
-    FD_SET(signal_fds[0], set);
-    return signal_fds[0];
-}
 static inline int send_wakeup_signal(char sig_cmd)
 {
     return send(signal_fds[1], &sig_cmd, sizeof(sig_cmd), 0);
@@ -130,10 +121,6 @@ static inline char reset_signal()
     char sig_recv = -1;
     recv(signal_fds[0], &sig_recv, sizeof(sig_recv), MSG_WAITALL);
     return sig_recv;
-}
-static inline int is_signaled(fd_set* set)
-{
-    return FD_ISSET(signal_fds[0], set);
 }
 
 /*******************************************************************************
@@ -147,9 +134,10 @@ static inline int is_signaled(fd_set* set)
 *******************************************************************************/
 static void *userial_read_thread(void *arg)
 {
-    fd_set input;
+    struct pollfd fds[3] = {};
     int n;
     char reason = 0;
+    int fdcount = 3;
 
     USERIALDBG("Entering userial_read_thread()");
 
@@ -160,59 +148,63 @@ static void *userial_read_thread(void *arg)
 
     while (userial_running)
     {
-        /* Initialize the input fd set */
-        FD_ZERO(&input);
+        memset(fds, 0, sizeof(fds));
+
         if (rx_flow_on == TRUE)
         {
-            FD_SET(userial_cb.fd[CH_EVT], &input);
-            FD_SET(userial_cb.fd[CH_ACL_IN], &input);
+            fds[0].fd = userial_cb.fd[CH_EVT];
+            fds[0].events |= POLLIN;
+            fds[1].fd = userial_cb.fd[CH_ACL_IN];
+            fds[1].events |= POLLIN;
         }
 
-        int fd_max = create_signal_fds(&input);
-        fd_max = (fd_max>userial_cb.fd[CH_EVT]) ? fd_max : userial_cb.fd[CH_EVT];
-        fd_max = (fd_max>userial_cb.fd[CH_ACL_IN]) ? fd_max : userial_cb.fd[CH_ACL_IN];
-
-        /* Do the select */
-        n = 0;
-        n = select(fd_max+1, &input, NULL, NULL, NULL);
-        if(is_signaled(&input))
-        {
-            reason = reset_signal();
-            if (reason == USERIAL_RX_EXIT)
-            {
-                ALOGI("exiting userial_read_thread");
-                userial_running = 0;
-                break;
-            }
-            else if (reason == USERIAL_RX_FLOW_OFF)
-            {
-                USERIALDBG("RX flow OFF");
-                rx_flow_on = FALSE;
-            }
-            else if (reason == USERIAL_RX_FLOW_ON)
-            {
-                USERIALDBG("RX flow ON");
-                rx_flow_on = TRUE;
-            }
+        if (signal_fds[0] == 0 && socketpair(AF_UNIX, SOCK_STREAM, 0, signal_fds) < 0) {
+            ALOGE("create_signal_sockets:socketpair failed, errno: %d", errno);
+        } else {
+            fds[2].fd = signal_fds[0];
+            fds[2].events |= POLLIN;
         }
 
-        if (n > 0)
-        {
+        /* Do the poll */
+        n = poll(fds, fdcount, -1);
+
+        if (n < 0) {
+            ALOGW("poll returned error: %d", errno);
+        } else if (n == 0) {
+            ALOGW( "Got a poll() TIMEOUT");
+        } else if (n > 0) {
+
+            if (fds[2].revents & POLLIN) {
+                reason = reset_signal();
+                if (reason == USERIAL_RX_EXIT)
+                {
+                    ALOGI("exiting userial_read_thread");
+                    userial_running = 0;
+                    break;
+                }
+                else if (reason == USERIAL_RX_FLOW_OFF)
+                {
+                    USERIALDBG("RX flow OFF");
+                    rx_flow_on = FALSE;
+                }
+                else if (reason == USERIAL_RX_FLOW_ON)
+                {
+                    USERIALDBG("RX flow ON");
+                    rx_flow_on = TRUE;
+                }
+            }
+
             /* We might have input */
-            if (FD_ISSET(userial_cb.fd[CH_EVT], &input))
+            if (fds[0].revents & POLLIN)
             {
                 hci_mct_receive_evt_msg();
             }
 
-            if (FD_ISSET(userial_cb.fd[CH_ACL_IN], &input))
+            if (fds[1].revents & POLLIN)
             {
                 hci_mct_receive_acl_msg();
             }
         }
-        else if (n < 0)
-            ALOGW( "select() Failed");
-        else if (n == 0)
-            ALOGW( "Got a select() TIMEOUT");
     } /* while */
 
     userial_running = 0;
