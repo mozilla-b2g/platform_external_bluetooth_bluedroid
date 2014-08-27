@@ -438,11 +438,15 @@ int btc_close_serv_socket(const char* name)
     int s = socket(AF_LOCAL, SOCK_STREAM, 0);
     ALOGV("%s: CLOSE SERVER SOCKET", __func__);
 
+    if (s < 0) {
+        ALOGE("failed to create socket:%s, fd:%d, errno:%d", name, s, errno);
+        return -1;
+    }
+
     temp_sock=socket_local_client_connect(s, name, ANDROID_SOCKET_NAMESPACE_ABSTRACT, SOCK_STREAM);
-    if(temp_sock) {
+    if (temp_sock >= 0) {
         ALOGV("connected to local socket:%s, s:  %d  temp_sock: %d", name, s,temp_sock);
         close(temp_sock);
-        close(s);
         return TRUE;
     }
     else {
