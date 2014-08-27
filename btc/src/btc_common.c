@@ -75,12 +75,6 @@ void btc_deinit()
         }
     }
 
-    if (hci_event_sock > 0) {
-        ALOGV("BTC_Denit:HCI sock id closing %d", hci_event_sock);
-        close(hci_event_sock);
-        hci_event_sock = -1;
-    }
-
     if (sock_id > 0) {
         ALOGV("BTC_Denit: SOCK_id closing %d", sock_id);
         close(sock_id);
