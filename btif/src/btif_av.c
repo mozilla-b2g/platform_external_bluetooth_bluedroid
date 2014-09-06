@@ -135,6 +135,8 @@ static const btif_sm_handler_t btif_av_state_handlers[] =
     btif_av_state_closing_handler
 };
 
+static void allow_connection(int is_valid);
+
 /*************************************************************************
 ** Extern functions
 *************************************************************************/
@@ -343,7 +345,11 @@ static BOOLEAN btif_av_state_idle_handler(btif_sm_event_t event, void *p_data)
             // Only for AVDTP connection request move to opening state
             if (event == BTA_AV_PENDING_EVT)
                 btif_sm_change_state(btif_av_cb.sm_handle, BTIF_AV_STATE_OPENING);
+#ifdef Q_BLUETOOTH
             HAL_CBACK(bt_av_callbacks, connection_priority_cb, &(btif_av_cb.peer_bda));
+#else
+            allow_connection(1);
+#endif
             break;
 
         case BTA_AV_REMOTE_CMD_EVT:
