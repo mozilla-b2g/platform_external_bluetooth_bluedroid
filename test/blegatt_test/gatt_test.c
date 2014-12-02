@@ -882,7 +882,11 @@ static void discovery_state_changed(bt_discovery_state_t state)
 }
 
 
+#ifdef Q_BLUETOOTH
 static void pin_request_cb(bt_bdaddr_t *remote_bd_addr, bt_bdname_t *bd_name, uint32_t cod, uint8_t secure )
+#else
+static void pin_request_cb(bt_bdaddr_t *remote_bd_addr, bt_bdname_t *bd_name, uint32_t cod )
+#endif
 {
     int ret = 0;
     remote_bd_address = remote_bd_addr;
