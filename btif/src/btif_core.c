@@ -608,7 +608,7 @@ void btif_enable_bluetooth_evt(tBTA_STATUS status, BD_ADDR local_bd)
             local_bd[3], local_bd[4], local_bd[5]);
         BTIF_TRACE_WARNING("***********************************************");
 
-        bdcpy(btif_local_bd_addr.address, local_bd);
+        //bdcpy(btif_local_bd_addr.address, local_bd);
 
         //save the bd address to config file
         bd2str(&btif_local_bd_addr, &buf);
