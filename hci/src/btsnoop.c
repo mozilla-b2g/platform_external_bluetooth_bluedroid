@@ -474,8 +474,8 @@ static int ext_parser_accept(int port)
 
     if (s_listen < 0)
     {
-        ALOGE("listener not created: listen fd %d", s_listen);
-        return -1;
+        ALOGE("listener not created: listen fd %d, errno=%d", s_listen, errno);
+        return -errno;
     }
 
     bzero(&servaddr, sizeof(servaddr));
@@ -603,6 +603,10 @@ static void ext_parser_thread(void* param)
     do
     {
         fd = ext_parser_accept(EXT_PARSER_PORT);
+        if (fd < 0) {
+          ALOGD("ext_parser_accept() failed: %d\n", ext_parser_fd);
+          break;
+        }
 
         ext_parser_fd = fd;
 
